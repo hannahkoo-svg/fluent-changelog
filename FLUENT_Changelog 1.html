@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FLUENT — Changelog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue:       #18A0FB;
+    --blue-dim:   #0d7ed4;
+    --bg:         #0e0f11;
+    --surface:    #16181c;
+    --surface2:   #1e2128;
+    --border:     #2a2d35;
+    --text:       #e8eaf0;
+    --text-muted: #7a7f8e;
+    --text-dim:   #4a4f5e;
+    --green:      #4ade80;
+    --amber:      #fbbf24;
+    --red:        #f87171;
+    --purple:     #a78bfa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────── */
+  .page-header {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow {
+    font-family: 'DM Mono', 'Menlo', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 8px;
+  }
+  .page-header h1 {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1.1;
+    color: var(--text);
+  }
+  .page-header p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  /* ── TABS ───────────────────────────────────────────── */
+  .tabs {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+  .tab {
+    padding: 14px 14px 12px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* ── PANELS ─────────────────────────────────────────── */
+  .panels { max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .cl-entry { margin-bottom: 32px; }
+  .cl-entry:last-child { margin-bottom: 0; }
+  .cl-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .cl-item {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text);
+    padding-left: 16px;
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .cl-item:last-child { margin-bottom: 0; }
+  .cl-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--purple);
+  }
+  .cl-item b { font-weight: 600; color: var(--text); }
+
+  .empty {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-style: italic;
+    padding: 8px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">FLUENT Automation Suite</div>
+  <h1>Changelog</h1>
+  <p>What's new across the suite, tool by tool.</p>
+</div>
+
+<!--
+  data-tab is the Google Sheet tab name — must match exactly (spacing/casing).
+  data-panel is just this page's local DOM id, kept separate so an id like
+  "text-sync" stays a valid attribute even where the sheet tab has a space.
+-->
+<div class="tabs" id="tabs">
+  <div class="tab active" data-panel="localizer" data-tab="Localizer">Localizer</div>
+  <div class="tab" data-panel="initial-builder" data-tab="Initial Builder">Initial Builder</div>
+  <div class="tab" data-panel="text-sync" data-tab="Text Sync">Text Sync</div>
+  <div class="tab" data-panel="replacer" data-tab="Replacer">Replacer</div>
+  <div class="tab" data-panel="export" data-tab="Export">Export</div>
+  <div class="tab" data-panel="frame-grab" data-tab="Frame Grab">Frame Grab</div>
+  <div class="tab" data-panel="etc" data-tab="Etc">Etc</div>
+</div>
+
+<div class="panels">
+  <div class="panel active" id="localizer"><div class="empty">Loading…</div></div>
+  <div class="panel" id="initial-builder"><div class="empty">Loading…</div></div>
+  <div class="panel" id="text-sync"><div class="empty">Loading…</div></div>
+  <div class="panel" id="replacer"><div class="empty">Loading…</div></div>
+  <div class="panel" id="export"><div class="empty">Loading…</div></div>
+  <div class="panel" id="frame-grab"><div class="empty">Loading…</div></div>
+  <div class="panel" id="etc"><div class="empty">Loading…</div></div>
+</div>
+
+<script>
+  // Same Apps Script Web App the plugins use — one sheet, one tab per tool.
+  const CHANGELOG_API = 'https://script.google.com/macros/s/AKfycbxM0b6likzUrDp2IelMpMQ99NhTaIlY2WJHYFciyAdAxjEiv0fx1pdh6r6Grhkfi1do9Q/exec';
+  const CHANGELOG_KEY = 'fluent-changelog-2026'; // must match Apps Script's SECRET
+
+  const loaded = {}; // sheetTabName -> true once fetched, so re-clicking a tab doesn't re-fetch
+
+  function loadTab(panelId, sheetTab) {
+    const panel = document.getElementById(panelId);
+    fetch(CHANGELOG_API + '?tab=' + encodeURIComponent(sheetTab) + '&key=' + encodeURIComponent(CHANGELOG_KEY))
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(rows => {
+        if (rows && rows.error) throw new Error(rows.error);
+        loaded[sheetTab] = true;
+        renderPanel(panel, rows);
+      })
+      .catch(err => {
+        panel.innerHTML = '<div class="empty">Couldn\u2019t load changelog. Check connection and try again.</div>';
+        console.error('Changelog load failed for ' + sheetTab + ':', err);
+      });
+  }
+
+  function renderPanel(panel, rows) {
+    panel.innerHTML = '';
+
+    if (!rows || rows.length === 0) {
+      panel.innerHTML = '<div class="empty">No entries yet.</div>';
+      return;
+    }
+
+    // Rows arrive newest-first, grouped by date, from the Apps Script side.
+    const order = [];
+    const groups = {};
+    rows.forEach(r => {
+      if (!groups[r.date]) { groups[r.date] = []; order.push(r.date); }
+      groups[r.date].push(r);
+    });
+
+    order.forEach(date => {
+      const entry = document.createElement('div');
+      entry.className = 'cl-entry';
+      const dateEl = document.createElement('div');
+      dateEl.className = 'cl-date';
+      dateEl.textContent = date;
+      entry.appendChild(dateEl);
+
+      groups[date].forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'cl-item';
+        // content HTML is built server-side from the sheet's actual bold formatting.
+        item.innerHTML = r.content + (r.link ? ' <a href="' + r.link + '" target="_blank" rel="noopener" style="color:var(--blue)">\u2192</a>' : '');
+        entry.appendChild(item);
+      });
+      panel.appendChild(entry);
+    });
+  }
+
+  document.getElementById('tabs').addEventListener('click', e => {
+    const tab = e.target.closest('.tab');
+    if (!tab) return;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const panelId = tab.dataset.panel;
+    const sheetTab = tab.dataset.tab;
+    document.getElementById(panelId).classList.add('active');
+    if (!loaded[sheetTab]) loadTab(panelId, sheetTab);
+  });
+
+  // Load the default (Localizer) tab immediately on page load.
+  loadTab('localizer', 'Localizer');
+</script>
+
+</body>
+</html>
