@@ -165,46 +165,45 @@
 </div>
 
 <script>
-  // Same Apps Script Web App the plugins use — one sheet, one tab per tool.
   const CHANGELOG_API = 'https://script.google.com/macros/s/AKfycbxM0b6likzUrDp2IelMpMQ99NhTaIlY2WJHYFciyAdAxjEiv0fx1pdh6r6Grhkfi1do9Q/exec';
-  const CHANGELOG_KEY = 'fluent-changelog-2026'; // must match Apps Script's SECRET
+  const CHANGELOG_KEY = 'fluent-changelog-2026';
 
-  const loaded = {}; // sheetTabName -> true once fetched, so re-clicking a tab doesn't re-fetch
+  const allData = {}; // sheetTabName -> rows, populated once from a single fetch
 
-  function loadTab(panelId, sheetTab) {
-    const panel = document.getElementById(panelId);
-    fetch(CHANGELOG_API + '?tab=' + encodeURIComponent(sheetTab) + '&key=' + encodeURIComponent(CHANGELOG_KEY))
+  function loadAllTabs() {
+    fetch(CHANGELOG_API + '?key=' + encodeURIComponent(CHANGELOG_KEY))
       .then(r => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       })
-      .then(rows => {
-        if (rows && rows.error) throw new Error(rows.error);
-        loaded[sheetTab] = true;
-        renderPanel(panel, rows);
+      .then(data => {
+        if (data && data.error) throw new Error(data.error);
+        Object.keys(data).forEach(tabName => { allData[tabName] = data[tabName]; });
+        // Render every panel now that we have everything cached.
+        document.querySelectorAll('.tab').forEach(tab => {
+          renderPanel(document.getElementById(tab.dataset.panel), allData[tab.dataset.tab]);
+        });
       })
       .catch(err => {
-        panel.innerHTML = '<div class="empty">Couldn\u2019t load changelog. Check connection and try again.</div>';
-        console.error('Changelog load failed for ' + sheetTab + ':', err);
+        document.querySelectorAll('.panel').forEach(p => {
+          p.innerHTML = '<div class="empty">Couldn\u2019t load changelog. Check connection and try again.</div>';
+        });
+        console.error('Changelog load failed:', err);
       });
   }
 
   function renderPanel(panel, rows) {
     panel.innerHTML = '';
-
     if (!rows || rows.length === 0) {
       panel.innerHTML = '<div class="empty">No entries yet.</div>';
       return;
     }
-
-    // Rows arrive newest-first, grouped by date, from the Apps Script side.
     const order = [];
     const groups = {};
     rows.forEach(r => {
       if (!groups[r.date]) { groups[r.date] = []; order.push(r.date); }
       groups[r.date].push(r);
     });
-
     order.forEach(date => {
       const entry = document.createElement('div');
       entry.className = 'cl-entry';
@@ -212,11 +211,9 @@
       dateEl.className = 'cl-date';
       dateEl.textContent = date;
       entry.appendChild(dateEl);
-
       groups[date].forEach(r => {
         const item = document.createElement('div');
         item.className = 'cl-item';
-        // content HTML is built server-side from the sheet's actual bold formatting.
         item.innerHTML = r.content + (r.link ? ' <a href="' + r.link + '" target="_blank" rel="noopener" style="color:var(--blue)">\u2192</a>' : '');
         entry.appendChild(item);
       });
@@ -230,14 +227,11 @@
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
-    const panelId = tab.dataset.panel;
-    const sheetTab = tab.dataset.tab;
-    document.getElementById(panelId).classList.add('active');
-    if (!loaded[sheetTab]) loadTab(panelId, sheetTab);
+    document.getElementById(tab.dataset.panel).classList.add('active');
+    // No fetch here anymore — panel was already rendered by loadAllTabs().
   });
 
-  // Load the default (Localizer) tab immediately on page load.
-  loadTab('localizer', 'Localizer');
+  loadAllTabs();
 </script>
 
 </body>
