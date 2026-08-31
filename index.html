@@ -129,6 +129,23 @@
     font-style: italic;
     padding: 8px 0;
   }
+
+  .skeleton {
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+  margin-bottom: 10px;
+}
+.skeleton:nth-child(1) { width: 40%; }
+.skeleton:nth-child(2) { width: 90%; }
+.skeleton:nth-child(3) { width: 75%; }
+
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 </style>
 </head>
 <body>
@@ -155,13 +172,13 @@
 </div>
 
 <div class="panels">
-  <div class="panel active" id="localizer"><div class="empty">Loading…</div></div>
-  <div class="panel" id="initial-builder"><div class="empty">Loading…</div></div>
-  <div class="panel" id="text-sync"><div class="empty">Loading…</div></div>
-  <div class="panel" id="replacer"><div class="empty">Loading…</div></div>
-  <div class="panel" id="export"><div class="empty">Loading…</div></div>
-  <div class="panel" id="frame-grab"><div class="empty">Loading…</div></div>
-  <div class="panel" id="etc"><div class="empty">Loading…</div></div>
+  <div class="panel active" id="localizer"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  <div class="panel" id="initial-builder"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  <div class="panel" id="text-sync"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  <div class="panel" id="replacer"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  <div class="panel" id="export"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  <div class="panel" id="frame-grab"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  <div class="panel" id="etc"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 </div>
 
 <script>
