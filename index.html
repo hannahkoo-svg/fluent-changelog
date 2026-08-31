@@ -86,22 +86,20 @@
   .tab:hover { color: var(--text); }
   .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
 
-  /* ── LOAD BAR ───────────────────────────────────────── */
-  .load-bar-wrap {
+  /* ── LOAD Counter ───────────────────────────────────────── */
+   .load-counter {
     max-width: 760px;
     margin: 0 auto;
-    height: 2px;
-    background: var(--border);
-    overflow: hidden;
+    padding: 10px 24px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    transition: opacity 0.3s ease-out;
   }
-  .load-bar {
-    height: 100%;
-    width: 0%;
-    background: var(--blue);
-    transition: width 3s linear;
-  }
-  .load-bar.done {
-    transition: width 0.2s ease-out;
+  .load-counter.error {
+    color: var(--red);
   }
 
   /* ── PANELS ─────────────────────────────────────────── */
@@ -188,8 +186,8 @@
   <div class="tab" data-panel="frame-grab" data-tab="Frame Grab">Frame Grab</div>
   <div class="tab" data-panel="etc" data-tab="Etc">Etc</div>
 </div>
-
-<div class="load-bar-wrap"><div class="load-bar" id="loadBar"></div></div>
+  
+<div class="load-counter" id="loadCounter">0%</div></div>
 
 <div class="panels">
   <div class="panel active" id="localizer"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
@@ -207,10 +205,19 @@
 
   const allData = {}; // sheetTabName -> rows, populated once from a single fetch
 
-  function loadAllTabs() {
-    const bar = document.getElementById('loadBar');
-    bar.classList.remove('done');
-    requestAnimationFrame(() => { bar.style.width = '90%'; }); // starts the 3s crawl to 90%
+    function loadAllTabs() {
+    const counter = document.getElementById('loadCounter');
+    let pct = 0;
+    counter.classList.remove('error');
+    counter.style.opacity = '1';
+
+    // Counts up to 90% over ~3s, then waits (or jumps to 100 if fetch finishes first).
+    const tick = setInterval(() => {
+      if (pct < 90) {
+        pct += 1;
+        counter.textContent = pct + '%';
+      }
+    }, 33); // ~30fps up to 90 over 3s
 
     fetch(CHANGELOG_API + '?key=' + encodeURIComponent(CHANGELOG_KEY))
       .then(r => {
@@ -223,12 +230,14 @@
         document.querySelectorAll('.tab').forEach(tab => {
           renderPanel(document.getElementById(tab.dataset.panel), allData[tab.dataset.tab]);
         });
-        bar.classList.add('done');
-        bar.style.width = '100%';
-        setTimeout(() => { bar.style.opacity = '0'; }, 300);
+        clearInterval(tick);
+        counter.textContent = '100%';
+        setTimeout(() => { counter.style.opacity = '0'; }, 300);
       })
       .catch(err => {
-        bar.style.background = 'var(--red)';
+        clearInterval(tick);
+        counter.classList.add('error');
+        counter.textContent = 'Failed to load';
         document.querySelectorAll('.panel').forEach(p => {
           p.innerHTML = '<div class="empty">Couldn\u2019t load changelog. Check connection and try again.</div>';
         });
