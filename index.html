@@ -86,8 +86,24 @@
   .tab:hover { color: var(--text); }
   .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
 
-<div class="load-bar-wrap"><div class="load-bar" id="loadBar"></div></div>
-  
+  /* ── LOAD BAR ───────────────────────────────────────── */
+  .load-bar-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    height: 2px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .load-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--blue);
+    transition: width 3s linear;
+  }
+  .load-bar.done {
+    transition: width 0.2s ease-out;
+  }
+
   /* ── PANELS ─────────────────────────────────────────── */
   .panels { max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
   .panel { display: none; }
@@ -132,23 +148,6 @@
     padding: 8px 0;
   }
 
-  .load-bar-wrap {
-    max-width: 760px;
-    margin: 0 auto;
-    height: 2px;
-    background: var(--border);
-    overflow: hidden;
-  }
-  .load-bar {
-    height: 100%;
-    width: 0%;
-    background: var(--blue);
-    transition: width 3s linear;
-  }
-  .load-bar.done {
-    transition: width 0.2s ease-out;
-  }
-
   .skeleton {
     height: 14px;
     border-radius: 4px;
@@ -190,6 +189,8 @@
   <div class="tab" data-panel="etc" data-tab="Etc">Etc</div>
 </div>
 
+<div class="load-bar-wrap"><div class="load-bar" id="loadBar"></div></div>
+
 <div class="panels">
   <div class="panel active" id="localizer"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
   <div class="panel" id="initial-builder"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
@@ -206,7 +207,7 @@
 
   const allData = {}; // sheetTabName -> rows, populated once from a single fetch
 
-    function loadAllTabs() {
+  function loadAllTabs() {
     const bar = document.getElementById('loadBar');
     bar.classList.remove('done');
     requestAnimationFrame(() => { bar.style.width = '90%'; }); // starts the 3s crawl to 90%
